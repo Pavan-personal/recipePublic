@@ -1,6 +1,6 @@
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import React, { useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { authExp } from "../firebase/config";
 import axios from "axios";
 import { useRecoilState } from "recoil";
@@ -18,18 +18,23 @@ function Navbar() {
   const [load, setLoad] = useRecoilState(loadAtom);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate(); // Add this line
   const [searchQuery, setSearchQuery] = useRecoilState(searchAtom);
   const ISSERVER = typeof window === "undefined";
+
   const handleGoogleAuthentication = async () => {
     setLoad(true);
     const googleAuth = new GoogleAuthProvider();
     const googleResponse = await signInWithPopup(authExp, googleAuth);
     if (!ISSERVER) {
-      const response = await axios.post("https://recipe-app-opal-five.vercel.app/user/signin", {
-        name: googleResponse.user.displayName,
-        email: googleResponse.user.email,
-        photoURL: googleResponse.user.photoURL,
-      });
+      const response = await axios.post(
+        "https://recipe-app-opal-five.vercel.app/user/signin",
+        {
+          name: googleResponse.user.displayName,
+          email: googleResponse.user.email,
+          photoURL: googleResponse.user.photoURL,
+        }
+      );
       console.log(response.data);
       if (response.data.success) {
         localStorage.setItem("token", response.data.token);
@@ -45,10 +50,11 @@ function Navbar() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    localStorage.clear();
     setIsLoggedIn(false);
     setIsMenuOpen(false);
     toast.success("Logged out successfully!");
+    navigate("/"); // Navigate to the home route
   };
 
   const handleSearch = (e) => {
