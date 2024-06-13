@@ -15,7 +15,7 @@ function Footer() {
         </a>
         {/* Twitter */}
         <a
-          href="https://x.com/Mithabhashi__"
+          href="https://x.com/SleekNcool"
           target="_blank"
           rel="noopener noreferrer"
         >
